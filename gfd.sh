@@ -7,13 +7,16 @@ if [[ "${TRACE-0}" == "1" ]]; then
     set -o xtrace
 fi
 
-if [[ "${1-}" =~ ^-*h(elp)?$ ]]; then
+show_usage() {
     echo 'Usage: ./gfd.sh repo
 
 Use git fetch to clone repo, since fetch support resume.
-
 '
-    exit
+}
+
+if [[ "${1-}" =~ ^-*h(elp)?$ ]]; then
+    show_usage
+    exit 0
 fi
 
 cd "$(dirname "$0")"
@@ -27,20 +30,21 @@ get_proj_dir() {
     echo "$dir"
 }
 
-checkout_branch() {
+get_branch() {
     IFS="'" read -ra splited < .git/FETCH_HEAD
     echo "${splited[1]}"
 }
 
 fetch_repo() {
+    local repo="$1"
     local dir
-    dir=$(get_proj_dir "$@")
-    echo "Project directory: $dir"
+    dir=$(get_proj_dir "$repo")
+    echo "project directory: $dir"
 
     set -x
-    mkdir "$dir" && cd "$dir" || exit 1
+    mkdir "$dir" && cd "$dir" || exit 2
     git init .
-    git remote add origin "$1"
+    git remote add origin "$repo"
     git fetch --depth 1 origin
     set +x
 
@@ -51,7 +55,15 @@ fetch_repo() {
 }
 
 main() {
-    fetch_repo "$@"
+    local repo=${1:-}
+    if [ -z "$repo" ]
+    then
+        show_usage
+        exit 1
+    else
+        echo "fetching..."
+        fetch_repo "$repo"
+    fi
 }
 
 main "$@"
