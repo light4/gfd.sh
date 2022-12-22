@@ -19,8 +19,6 @@ if [[ "${1-}" =~ ^-*h(elp)?$ ]]; then
     exit 0
 fi
 
-cd "$(dirname "$0")"
-
 get_proj_dir() {
     local repo="$1"
     IFS='/' read -ra splited <<< "$repo"
@@ -43,7 +41,7 @@ fetch_repo() {
 
     set -x
     mkdir "$dir" && cd "$dir" || exit 2
-    git init .
+    [ ! -d .git ] && git init .
     git remote add origin "$repo"
     git fetch --depth 1 origin
     set +x
