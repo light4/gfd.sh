@@ -22,7 +22,7 @@ fi
 get_proj_dir() {
     local repo="$1"
     IFS='/' read -ra splited <<< "$repo"
-    local proj="${splited[4]}"
+    local proj="${splited[-1]}"
     IFS='.' read -ra proj_arr <<< "$proj"
     local dir="${proj_arr[0]}"
     echo "$dir"
