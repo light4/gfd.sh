@@ -42,7 +42,7 @@ fetch_repo() {
     set -x
     mkdir -p "$dir" && cd "$dir" || exit 2
     [ ! -d .git ] && git init .
-    git remote add origin "$repo"
+    [ -z "$(git remote)" ] && git remote add origin "$repo"
     git fetch --depth 1 origin
     set +x
 
