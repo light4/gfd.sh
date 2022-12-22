@@ -40,7 +40,7 @@ fetch_repo() {
     echo "project directory: $dir"
 
     set -x
-    mkdir "$dir" && cd "$dir" || exit 2
+    mkdir -p "$dir" && cd "$dir" || exit 2
     [ ! -d .git ] && git init .
     git remote add origin "$repo"
     git fetch --depth 1 origin
